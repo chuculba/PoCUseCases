@@ -1,0 +1,81 @@
+POC Use Cases
+==============
+This project demonstrates usecases DE21 and OM08
+
+Installing and Running
+=======================
+
+Pre-rquisites
+-------------
+Java : JDK 1.7.0_51
+PostGreSQL Database : For this project, version 9.3.x was used
+PostGreSQL jdbc driver
+JBoss Fuse 6.1
+JBoss Developer Studio 7.1 with Integration Stack
+SmarBeat SOAPUI
+
+Installing the Database
+-----------------------
+Follow the usual instruction for installing the database
+
+For this use case, I used the default database 'postgres' with user name 'postgres' and password 'postgres'
+
+For this use case, I created a simple 2 column table as :
+
+CREATE TABLE message
+(
+  id integer,
+  message text
+)
+
+Installing JDBC Driver
+----------------------
+2 Approaches possible :
+
+(1) Drop the driver jar file in deploy folder and it will be picked up by hot deployer.
+
+(2) Create the folder structure manually, reflecting GroupId/ArtifactID/Version scheme, in the local maven repository and
+install it from Fuse Console using the command :
+
+  osgi:install -s wrap:mvn:GroupId/ArtifactId/Version
+  
+  e.g.
+  
+  osgi:install -s wrap:mvn:org.postgresql/postgresql/9.3-1100.jdbc41
+
+  I used Approach 2.
+  
+Installing the Datasource Blueprint
+------------------------------------
+Just drop in the datasource-poc.xml file (modify it according to your database settings) in the deploy folder
+
+Building and Installing the project bundle
+-------------------------------------------
+mvn clean install
+
+osgi:install -s mvn:GroupId/ArtifactID/Version
+
+Create the persistent id (ConfigAdmin Service) 
+----------------------------------------------
+This step is needed to externalise the maxRequestsPerSecond property. This ios the property we use in Throttler configuration. 
+This can be done using either the osgi console or hawtio console. I used hawtio console.
+
+persistent id used is poc.blueprint and the property configured in that is poc.maxRequestsPerSecond
+
+If you don't configure and define this property, the default I have kept is 1 request (look in the blueprint file for the bundle.
+  
+
+Using SOAPUI
+-------------
+
+Use the following URLs for generating the requests 
+ 
+ 
+For restful access :
+http://localhost:9090/de21_om08/de21service
+
+For SOAP-WS Access :
+http://localhost:8181/cxf/de21/?wsdl
+
+
+
